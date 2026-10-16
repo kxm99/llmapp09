@@ -20,7 +20,7 @@ env:
   OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
   OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
   # Judge model: must exist on the server at OLLAMA_BASE_URL
-  JUDGE_MODEL: llama3.2
+  JUDGE_MODEL: glm-5.3-flash:cloud
 
 jobs:
   deepeval:
