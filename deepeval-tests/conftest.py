@@ -2,9 +2,27 @@
 Shared fixtures and configuration for deepeval LLM evaluation tests.
 """
 
+import os
+
 import pytest
 from deepeval.metrics import GEval
+from deepeval.models import LocalModel
 from deepeval.test_case import LLMTestCaseParams
+
+
+# ---------------------------------------------------------------------------
+# Judge model: Ollama at OLLAMA_BASE_URL (falls back to local Ollama)
+# ---------------------------------------------------------------------------
+
+_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
+if not _base_url.endswith("/v1"):
+    _base_url += "/v1"
+
+JUDGE = LocalModel(
+    model=os.getenv("JUDGE_MODEL", "llama3.2"),
+    base_url=_base_url,
+    api_key=os.getenv("OLLAMA_API_KEY") or "ollama",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -25,6 +43,7 @@ def json_schema_metric(schema_description: str):
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=JUDGE,
     )
 
 
@@ -42,6 +61,7 @@ def output_correctness_metric():
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=JUDGE,
     )
 
 
@@ -64,4 +84,5 @@ def answer_relevancy_metric():
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=JUDGE,
     )
